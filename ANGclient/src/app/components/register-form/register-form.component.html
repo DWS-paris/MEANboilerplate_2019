@@ -1,8 +1,6 @@
-<h2>Register</h2>
-
 <form   
   [formGroup]="form" 
-  (submit)="regirster.emit({ data: form.value, action: action })"
+  (submit)="register.emit(form.value)"
 >
     <fieldset>
         <legend>Credentials</legend>
@@ -45,6 +43,7 @@
             formControlName="birthdate"
         >
     </fieldset>
+
   <button 
     type="submit"
     [disabled]="!form.valid || form.value.password !== form.value.repeatepassword"

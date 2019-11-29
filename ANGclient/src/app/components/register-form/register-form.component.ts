@@ -5,7 +5,6 @@ import { Component, OnInit, OnChanges, Output, Input, EventEmitter } from '@angu
 
 // Gestion des formulaires
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { PostModel } from '../../models/post.model';
 
 @Component({
   selector: 'app-register-form',
@@ -22,7 +21,7 @@ export class RegisterFormComponent implements OnInit, OnChanges {
   /* 
   Declaration
   */
-    @Output() regirster = new EventEmitter();
+    @Output() register = new EventEmitter();
     public form: FormGroup;
   //
   constructor( private FormBuilder: FormBuilder ) { }

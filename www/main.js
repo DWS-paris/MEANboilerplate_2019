@@ -8,29 +8,12 @@
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./routes/create-post-page/module": [
-		"./src/app/routes/create-post-page/module.ts",
-		"default~routes-create-post-page-module~routes-edit-post-page-module~routes-register-page-module",
-		"common",
-		"routes-create-post-page-module"
-	],
-	"./routes/edit-post-page/module": [
-		"./src/app/routes/edit-post-page/module.ts",
-		"default~routes-create-post-page-module~routes-edit-post-page-module~routes-register-page-module",
-		"common",
-		"routes-edit-post-page-module"
-	],
 	"./routes/home-page/module": [
 		"./src/app/routes/home-page/module.ts",
 		"routes-home-page-module"
 	],
-	"./routes/post-page/module": [
-		"./src/app/routes/post-page/module.ts",
-		"routes-post-page-module"
-	],
 	"./routes/register-page/module": [
 		"./src/app/routes/register-page/module.ts",
-		"default~routes-create-post-page-module~routes-edit-post-page-module~routes-register-page-module",
 		"routes-register-page-module"
 	],
 	"./routes/user-page/module": [
@@ -48,7 +31,7 @@ function webpackAsyncContext(req) {
 	}
 
 	var ids = map[req], id = ids[0];
-	return Promise.all(ids.slice(1).map(__webpack_require__.e)).then(function() {
+	return __webpack_require__.e(ids[1]).then(function() {
 		return __webpack_require__(id);
 	});
 }
@@ -437,18 +420,6 @@ const MainRouter = [
     {
         path: 'me',
         loadChildren: './routes/user-page/module#Module'
-    },
-    {
-        path: 'create-post',
-        loadChildren: './routes/create-post-page/module#Module'
-    },
-    {
-        path: 'edit/:id',
-        loadChildren: './routes/edit-post-page/module#Module'
-    },
-    {
-        path: 'post/:id',
-        loadChildren: './routes/post-page/module#Module'
     }
 ];
 //
@@ -547,7 +518,7 @@ let CrudService = class CrudService {
             return this.HttpClient.delete(`${this.apiUrl}/${endpoint}/${id}`)
                 .toPromise().then(this.getData).catch(this.handleError);
         };
-        this.apiUrl = 'https://jsonplaceholder.typicode.com';
+        this.apiUrl = 'http://localhost:9868/api';
     }
     ;
     //

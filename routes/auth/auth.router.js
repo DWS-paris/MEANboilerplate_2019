@@ -32,7 +32,7 @@ Routes definition
                 }
 
                 // Check fields in the body
-                const { miss, extra, ok } = checkFields( Mandatories.identity, req.body);
+                const { miss, extra, ok } = checkFields( Mandatories.register, req.body);
 
                 if(!ok){
                     return res.status(400).json({

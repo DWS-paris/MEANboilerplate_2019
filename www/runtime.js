@@ -64,7 +64,7 @@
 /******/
 /******/ 	// script path function
 /******/ 	function jsonpScriptSrc(chunkId) {
-/******/ 		return __webpack_require__.p + "" + ({"default~routes-create-post-page-module~routes-edit-post-page-module~routes-register-page-module":"default~routes-create-post-page-module~routes-edit-post-page-module~routes-register-page-module","common":"common","routes-create-post-page-module":"routes-create-post-page-module","routes-edit-post-page-module":"routes-edit-post-page-module","routes-register-page-module":"routes-register-page-module","routes-home-page-module":"routes-home-page-module","routes-post-page-module":"routes-post-page-module","routes-user-page-module":"routes-user-page-module"}[chunkId]||chunkId) + ".js"
+/******/ 		return __webpack_require__.p + "" + ({"routes-home-page-module":"routes-home-page-module","routes-register-page-module":"routes-register-page-module","routes-user-page-module":"routes-user-page-module"}[chunkId]||chunkId) + ".js"
 /******/ 	}
 /******/
 /******/ 	// The require function

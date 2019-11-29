@@ -19,7 +19,7 @@ Definition & export
     //
 
     constructor( private HttpClient: HttpClient ){
-      this.apiUrl = 'https://jsonplaceholder.typicode.com';
+      this.apiUrl = 'http://localhost:9868/api';
     };
 
     /* 
