@@ -42,6 +42,7 @@ Methods
 
     const login = (req, res) => {
         return new Promise( (resolve, reject) => {
+            
             Models.identity.findOne( { email: req.body.email }, ( err, identity ) => {
                 if( err ){
                     return reject(err);
@@ -60,6 +61,7 @@ Methods
                     }
                 }
             })
+
         });
     };
 
@@ -70,6 +72,23 @@ Methods
             return resolve('User logedout');
         });
     }
+
+    const getUserInfo = (req) => {
+        return new Promise( (resolve, reject) => {
+            if(!req.user.isValidated) { return reject('Identity not validated') }
+            else{
+                Models.user.findOne({ identity: req.user._id }, (err, user) => {
+                    if(err) { return reject(err) }
+                    else{ 
+                        // Decrypt user additional name
+                        decryptData(user, 'firstname', 'lastname', 'birthdate')
+
+                        return resolve({user, identity: req.user})
+                    }
+                })
+            }
+        })
+    }
 //    
 
 /*
@@ -78,6 +97,7 @@ Export
     module.exports = {
         register,
         login,
-        logout
+        logout,
+        getUserInfo
     }
 //

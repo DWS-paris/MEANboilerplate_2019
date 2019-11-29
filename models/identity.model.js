@@ -12,6 +12,7 @@ Definition
     const MySchema = new Schema({
         email: { unique: true, type: String },
         password: String,
+        isValidated: { type: Boolean, default: true }
     });
 //
 

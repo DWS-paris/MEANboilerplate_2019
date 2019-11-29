@@ -8,14 +8,17 @@ Imports
     // Modules
     const { checkFields } = require('../../services/request.checker');
     const Mandatories = require('../../services/mandatory.service');
-    const { register, login, logout } = require('./auth.controller');
+    const { register, login, logout, getUserInfo } = require('./auth.controller');
 //
 
 /*
 Routes definition
 */
     class MyRouterClass {
-        constructor() {}
+        // Inject Passport to secure routes
+        constructor({ passport }) {
+            this.passport = passport;
+        }
         
         // Set route fonctions
         routes(){
@@ -113,6 +116,25 @@ Routes definition
                 .catch( apiResponse => {
                     return res.status(400).json({
                         message: 'Identity not found',
+                        data: null,
+                        err: apiResponse
+                    })
+                })
+            });
+
+            // GET 'api/auth': check user token (for Angular AuthGuard)
+            authRouter.get( '/', this.passport.authenticate('jwt', { session: false }), (req, res) => {
+                getUserInfo(req)
+                .then( apiResponse => {
+                    return res.status(200).json({
+                        message: 'User data from token found',
+                        data: apiResponse,
+                        err: null
+                    })
+                })
+                .catch( apiResponse => {
+                    return res.status(400).json({
+                        message: 'User data from token not found',
                         data: null,
                         err: apiResponse
                     })
