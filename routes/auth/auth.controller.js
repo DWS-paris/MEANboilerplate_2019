@@ -3,6 +3,7 @@ Import
 */
     const Models = require('../../models/index');
     const bcrypt = require('bcryptjs');
+    const { cryptData, decryptData } = require('../../services/crypto.service')
 //
 
 /*
@@ -26,11 +27,11 @@ Methods
                     // Save new user
                     Models.user.create({
                         identity: identity._id,
-                        firstname: req.body.firstname,
-                        lastname: req.body.lastname,
-                        birthdate: req.body.birthdate
+                        firstname: cryptData(req.body.firstname),
+                        lastname: cryptData(req.body.lastname),
+                        birthdate: cryptData(req.body.birthdate)
                     })
-                    .then( user => resolve(user) )
+                    .then( user => resolve({user, identity}) )
                     .catch( err => reject(err))
                 } )
                 .catch( err => reject(err))

@@ -9,10 +9,10 @@ Import
 Definition
 */
     const MySchema = new Schema({
-        indentity: String,
+        identity: String,
         firstname: String,
         lastname: String,
-        birthdate: Date,
+        birthdate: String,
     });
 //
 
