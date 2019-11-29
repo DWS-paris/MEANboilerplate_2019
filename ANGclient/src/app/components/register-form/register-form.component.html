@@ -1,0 +1,52 @@
+<h2>Register</h2>
+
+<form   
+  [formGroup]="form" 
+  (submit)="regirster.emit({ data: form.value, action: action })"
+>
+    <fieldset>
+        <legend>Credentials</legend>
+        <label for="email">Email</label>
+        <input 
+            type="email" id="email" name="email" required minlength="5"
+            formControlName="email"
+        >
+
+        <label for="password">Password</label>
+        <input 
+            type="password" id="password" name="password" required minlength="5"
+            formControlName="password"
+        >
+
+        <label for="password">Repeate Password</label>
+        <input 
+            type="password" id="repeatepassword" name="repeatepassword" required minlength="5"
+            formControlName="repeatepassword"
+        >
+    </fieldset>
+  
+    <fieldset>
+        <legend>About you</legend>
+        <label for="firstname">Firstname</label>
+        <input 
+            type="text" id="firstname" name="firstname" required minlength="2"
+            formControlName="firstname"
+        >
+
+        <label for="lastname">Lastname</label>
+        <input 
+            type="text" id="lastname" name="lastname" required minlength="2"
+            formControlName="lastname"
+        >
+
+        <label for="birthdate">Birthdate</label>
+        <input 
+            type="date" id="birthdate" name="birthdate" required minlength="2"
+            formControlName="birthdate"
+        >
+    </fieldset>
+  <button 
+    type="submit"
+    [disabled]="!form.valid || form.value.password !== form.value.repeatepassword"
+  >Register</button>
+</form>

@@ -26,7 +26,8 @@ Server configuration
         // Initialization fonction
         init(){
             // View engine configuration
-            server.set('view engine', 'ejs');
+            server.engine( 'html', ejs.renderFile );
+            server.set('view engine', 'html');
 
             // Static path configuration
             server.set( 'views', __dirname + '/www' );
