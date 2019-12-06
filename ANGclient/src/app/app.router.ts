@@ -2,6 +2,7 @@
 Imports
 */
     import { Routes } from "@angular/router";
+    import { AuthGuard } from "./auth.guard";
 //
 
 /* 
@@ -18,7 +19,8 @@ Export
         },
         {
             path: 'me',
-            loadChildren: './routes/user-page/module#Module'
+            loadChildren: './routes/user-page/module#Module',
+            canActivate: [ AuthGuard ]
         }
     ];
 //

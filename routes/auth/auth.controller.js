@@ -42,12 +42,16 @@ Methods
 
     const login = (req, res) => {
         return new Promise( (resolve, reject) => {
+
+            console.log(req.body)
             
             Models.identity.findOne( { email: req.body.email }, ( err, identity ) => {
                 if( err ){
                     return reject(err);
                 }
                 else{
+                    console.log(identity)
+
                     // Check identity password
                     const validatedPassword = bcrypt.compareSync( req.body.password, identity.password );
                     if( !validatedPassword ){

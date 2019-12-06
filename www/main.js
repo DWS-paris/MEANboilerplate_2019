@@ -10,10 +10,12 @@
 var map = {
 	"./routes/home-page/module": [
 		"./src/app/routes/home-page/module.ts",
+		"default~routes-home-page-module~routes-register-page-module",
 		"routes-home-page-module"
 	],
 	"./routes/register-page/module": [
 		"./src/app/routes/register-page/module.ts",
+		"default~routes-home-page-module~routes-register-page-module",
 		"routes-register-page-module"
 	],
 	"./routes/user-page/module": [
@@ -31,7 +33,7 @@ function webpackAsyncContext(req) {
 	}
 
 	var ids = map[req], id = ids[0];
-	return __webpack_require__.e(ids[1]).then(function() {
+	return Promise.all(ids.slice(1).map(__webpack_require__.e)).then(function() {
 		return __webpack_require__(id);
 	});
 }
@@ -297,10 +299,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _services_crud_crud_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./services/crud/crud.service */ "./src/app/services/crud/crud.service.ts");
 
 /*
 Imports
 */
+
 
 //
 /*
@@ -312,7 +316,25 @@ let AppComponent =
 Export
 */
 class AppComponent {
+    constructor(CrudService) {
+        this.CrudService = CrudService;
+        this.getUserInfos = () => {
+            this.CrudService.readItem('auth')
+                .then(apiResponse => {
+                console.log(apiResponse);
+            })
+                .catch(apiResponse => {
+                console.error(apiResponse);
+            });
+        };
+    }
+    ngOnInit() {
+        this.getUserInfos();
+    }
 };
+AppComponent.ctorParameters = () => [
+    { type: _services_crud_crud_service__WEBPACK_IMPORTED_MODULE_2__["CrudService"] }
+];
 AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-root',
@@ -403,6 +425,8 @@ AppModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MainRouter", function() { return MainRouter; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _auth_guard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./auth.guard */ "./src/app/auth.guard.ts");
+
 
 //
 /*
@@ -419,9 +443,79 @@ const MainRouter = [
     },
     {
         path: 'me',
-        loadChildren: './routes/user-page/module#Module'
+        loadChildren: './routes/user-page/module#Module',
+        canActivate: [_auth_guard__WEBPACK_IMPORTED_MODULE_1__["AuthGuard"]]
     }
 ];
+//
+
+
+/***/ }),
+
+/***/ "./src/app/auth.guard.ts":
+/*!*******************************!*\
+  !*** ./src/app/auth.guard.ts ***!
+  \*******************************/
+/*! exports provided: AuthGuard */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthGuard", function() { return AuthGuard; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
+/* harmony import */ var _services_crud_crud_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./services/crud/crud.service */ "./src/app/services/crud/crud.service.ts");
+
+/*
+Imports & definition
+*/
+// Imports
+
+
+
+// Definition
+let AuthGuard = 
+//
+/*
+Export
+*/
+class AuthGuard {
+    /*
+    Properties
+    */
+    constructor(Router, CrudService) {
+        this.Router = Router;
+        this.CrudService = CrudService;
+    }
+    //
+    /*
+    Auth strategy
+    Parameters are used to define specific methods (if needed)
+    */
+    canActivate(next, state) {
+        return new Promise((resolve, reject) => {
+            // Use the service to get user infor from token
+            this.CrudService.readItem('auth')
+                .then(apiResponse => resolve(true))
+                .catch(apiResponse => this.Router.navigateByUrl('/'));
+        });
+    }
+};
+AuthGuard.ctorParameters = () => [
+    { type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"] },
+    { type: _services_crud_crud_service__WEBPACK_IMPORTED_MODULE_3__["CrudService"] }
+];
+AuthGuard = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+        providedIn: 'root'
+    })
+    //
+    /*
+    Export
+    */
+], AuthGuard);
+
 //
 
 

@@ -4,6 +4,7 @@ Imports & definition
   // Imports
   import { Injectable } from '@angular/core';
   import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+  import { CrudService } from "./services/crud/crud.service";
 
   // Definition
   @Injectable({
@@ -21,6 +22,7 @@ Export
     */
       constructor( 
         private Router: Router,
+        private CrudService: CrudService
       ){}
     //
 
@@ -31,7 +33,10 @@ Export
     */
       canActivate( next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<any> {
         return new Promise( (resolve, reject) => {
-          
+            // Use the service to get user infor from token
+            this.CrudService.readItem('auth')
+            .then( apiResponse => resolve(true) )
+            .catch( apiResponse =>  this.Router.navigateByUrl('/'))
         })
       }
     //
