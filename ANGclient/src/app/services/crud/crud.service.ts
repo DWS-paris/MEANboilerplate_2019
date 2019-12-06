@@ -3,6 +3,7 @@ Imports
 */
   import { Injectable } from '@angular/core';
   import { HttpClient, HttpHeaders } from '@angular/common/http';
+  import { ObservableService } from "../obervable/observable-service.service";
 //
 
 /* 
@@ -18,7 +19,7 @@ Definition & export
       private apiUrl: String;
     //
 
-    constructor( private HttpClient: HttpClient ){
+    constructor( private HttpClient: HttpClient, private ObservableService: ObservableService ){
       this.apiUrl = 'http://localhost:9868/api';
     };
 
@@ -33,19 +34,19 @@ Definition & export
         
         return this.HttpClient.post(`${this.apiUrl}/${endpoint}`, data, 
         { headers: myHeader })
-        .toPromise().then(this.getData).catch(this.handleError);
+        .toPromise().then( data => this.getData(data, endpoint) ).catch(this.handleError);
       }
 
       // CRUD: Read
       public readItem = (endpoint: String) => {
         return this.HttpClient.get(`${this.apiUrl}/${endpoint}`)
-        .toPromise().then(this.getData).catch(this.handleError);
+        .toPromise().then( data => this.getData(data, endpoint) ).catch(this.handleError);
       }
 
       // CRUD: Read one
       public readOneItem = (endpoint: String, id: String) => {
         return this.HttpClient.get(`${this.apiUrl}/${endpoint}/${id}`)
-        .toPromise().then(this.getData).catch(this.handleError);
+        .toPromise().then( data => this.getData(data) ).catch(this.handleError);
       }
 
       // CRUD: Update
@@ -56,13 +57,13 @@ Definition & export
         
         return this.HttpClient.put(`${this.apiUrl}/${endpoint}`, data, 
         { headers: myHeader })
-        .toPromise().then(this.getData).catch(this.handleError);
+        .toPromise().then( data => this.getData(data) ).catch(this.handleError);
       }
 
       // CRUD: Delete
       public deleteItem = ( endpoint: string, id:string ) => {
         return this.HttpClient.delete(`${this.apiUrl}/${endpoint}/${id}`)
-        .toPromise().then(this.getData).catch(this.handleError);
+        .toPromise().then( data => this.getData(data) ).catch(this.handleError);
       }
     //
 
@@ -70,8 +71,24 @@ Definition & export
     Methods to get API responses
     */
       // Get the API response
-      private getData(res: any){
-        return res || {};
+      private getData(apiResponse: any, endpoint: String = ''){
+        switch(endpoint){
+          case 'auth/login':
+            // Update logged user obervable
+            this.ObservableService.setEmptyDataObservable('loggeduser', apiResponse.data);
+            return apiResponse || {};
+            break;
+
+          case 'auth':
+              // Update logged user obervable
+              this.ObservableService.setEmptyDataObservable('loggeduser', apiResponse.data);
+              return apiResponse || {};
+              break;
+
+          default:
+            return apiResponse || {};
+            break;
+        }
       };
 
       // Get the API error

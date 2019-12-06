@@ -54,7 +54,7 @@ module.exports = webpackAsyncContext;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ("<header>\n  <nav>\n    <ul>\n      <li>\n        <a [routerLink]=\"'/'\">Home page</a>\n      </li>\n      <li><a [routerLink]=\"'/register'\">Register</a></li>\n      <li><a [routerLink]=\"'/me'\">User page</a></li>\n      <li><a [routerLink]=\"'/create-post'\">Create post</a></li>\n    </ul>\n  </nav>\n</header>");
+/* harmony default export */ __webpack_exports__["default"] = ("<header>\n  <nav>\n    <ul>\n      <li>\n        <a [routerLink]=\"'/'\">Home page</a>\n      </li>\n      <li *ngIf=\"!userIsLogged\"><a [routerLink]=\"'/register'\">Register</a></li>\n      <li *ngIf=\"userIsLogged\"><a [routerLink]=\"'/me'\">User page</a></li>\n      <li *ngIf=\"userIsLogged\"><a [routerLink]=\"'/create-post'\">Create post</a></li>\n    </ul>\n  </nav>\n</header>");
 
 /***/ }),
 
@@ -533,13 +533,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MainNavigationComponent", function() { return MainNavigationComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _services_obervable_observable_service_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/obervable/observable-service.service */ "./src/app/services/obervable/observable-service.service.ts");
+/* harmony import */ var _services_crud_crud_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/crud/crud.service */ "./src/app/services/crud/crud.service.ts");
+
+
 
 
 let MainNavigationComponent = class MainNavigationComponent {
-    constructor() { }
+    //
+    constructor(ObservableService, CrudService) {
+        this.ObservableService = ObservableService;
+        this.CrudService = CrudService;
+    }
     ngOnInit() {
+        // Get user data observer
+        this.ObservableService.getLoggedUser().subscribe((loggedUSerObserver) => tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
+            // Check if user is logged
+            if (loggedUSerObserver === null) {
+                this.userIsLogged = false;
+                console.log({ loggedUSerObserver, userIsLogged: this.userIsLogged });
+                // Try to get user data fromo token
+                yield this.CrudService.readItem('auth');
+            }
+            else {
+                this.userIsLogged = true;
+                console.log({ loggedUSerObserver, userIsLogged: this.userIsLogged });
+            }
+        }));
     }
 };
+MainNavigationComponent.ctorParameters = () => [
+    { type: _services_obervable_observable_service_service__WEBPACK_IMPORTED_MODULE_2__["ObservableService"] },
+    { type: _services_crud_crud_service__WEBPACK_IMPORTED_MODULE_3__["CrudService"] }
+];
 MainNavigationComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-main-navigation',
@@ -564,10 +590,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm2015/http.js");
+/* harmony import */ var _obervable_observable_service_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../obervable/observable-service.service */ "./src/app/services/obervable/observable-service.service.ts");
 
 /*
 Imports
 */
+
 
 
 //
@@ -576,8 +604,9 @@ Definition & export
 */
 let CrudService = class CrudService {
     //
-    constructor(HttpClient) {
+    constructor(HttpClient, ObservableService) {
         this.HttpClient = HttpClient;
+        this.ObservableService = ObservableService;
         /*
         Methods CRUD
         */
@@ -587,17 +616,17 @@ let CrudService = class CrudService {
             let myHeader = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]();
             myHeader.append('Content-Type', 'application/json; charset=UTF-8');
             return this.HttpClient.post(`${this.apiUrl}/${endpoint}`, data, { headers: myHeader })
-                .toPromise().then(this.getData).catch(this.handleError);
+                .toPromise().then(data => this.getData(data, endpoint)).catch(this.handleError);
         };
         // CRUD: Read
         this.readItem = (endpoint) => {
             return this.HttpClient.get(`${this.apiUrl}/${endpoint}`)
-                .toPromise().then(this.getData).catch(this.handleError);
+                .toPromise().then(data => this.getData(data, endpoint)).catch(this.handleError);
         };
         // CRUD: Read one
         this.readOneItem = (endpoint, id) => {
             return this.HttpClient.get(`${this.apiUrl}/${endpoint}/${id}`)
-                .toPromise().then(this.getData).catch(this.handleError);
+                .toPromise().then(data => this.getData(data)).catch(this.handleError);
         };
         // CRUD: Update
         this.updateItem = (endpoint, data) => {
@@ -605,12 +634,12 @@ let CrudService = class CrudService {
             let myHeader = new _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpHeaders"]();
             myHeader.append('Content-Type', 'application/json; charset=UTF-8');
             return this.HttpClient.put(`${this.apiUrl}/${endpoint}`, data, { headers: myHeader })
-                .toPromise().then(this.getData).catch(this.handleError);
+                .toPromise().then(data => this.getData(data)).catch(this.handleError);
         };
         // CRUD: Delete
         this.deleteItem = (endpoint, id) => {
             return this.HttpClient.delete(`${this.apiUrl}/${endpoint}/${id}`)
-                .toPromise().then(this.getData).catch(this.handleError);
+                .toPromise().then(data => this.getData(data)).catch(this.handleError);
         };
         this.apiUrl = 'http://localhost:9868/api';
     }
@@ -620,8 +649,22 @@ let CrudService = class CrudService {
     Methods to get API responses
     */
     // Get the API response
-    getData(res) {
-        return res || {};
+    getData(apiResponse, endpoint = '') {
+        switch (endpoint) {
+            case 'auth/login':
+                // Update logged user obervable
+                this.ObservableService.setEmptyDataObservable('loggeduser', apiResponse.data);
+                return apiResponse || {};
+                break;
+            case 'auth':
+                // Update logged user obervable
+                this.ObservableService.setEmptyDataObservable('loggeduser', apiResponse.data);
+                return apiResponse || {};
+                break;
+            default:
+                return apiResponse || {};
+                break;
+        }
     }
     ;
     // Get the API error
@@ -631,13 +674,74 @@ let CrudService = class CrudService {
     ;
 };
 CrudService.ctorParameters = () => [
-    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"] }
+    { type: _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"] },
+    { type: _obervable_observable_service_service__WEBPACK_IMPORTED_MODULE_3__["ObservableService"] }
 ];
 CrudService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
         providedIn: 'root'
     })
 ], CrudService);
+
+//
+
+
+/***/ }),
+
+/***/ "./src/app/services/obervable/observable-service.service.ts":
+/*!******************************************************************!*\
+  !*** ./src/app/services/obervable/observable-service.service.ts ***!
+  \******************************************************************/
+/*! exports provided: ObservableService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ObservableService", function() { return ObservableService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
+
+/*
+Imports
+*/
+
+
+//
+/*
+Expoort
+*/
+let ObservableService = class ObservableService {
+    constructor() {
+        /*
+        Set observable empty object
+        */
+        this.loggedUser = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"](null);
+        //
+        /*
+        Function to set observable data has empty
+        */
+        this.setEmptyDataObservable = (type, data) => {
+            switch (type) {
+                case 'loggeduser':
+                    this.loggedUser.next(data);
+                    break;
+                default:
+                    break;
+            }
+        };
+    }
+    //
+    /*
+    Observers functions
+    */
+    getLoggedUser() { return this.loggedUser; }
+};
+ObservableService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+        providedIn: 'root'
+    })
+], ObservableService);
 
 //
 

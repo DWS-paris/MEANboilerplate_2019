@@ -11,7 +11,7 @@ Expoort
   @Injectable({
     providedIn: 'root'
   })
-  export class ObservableServiceService {
+  export class ObservableService {
 
     constructor() { }
 
@@ -27,7 +27,7 @@ Expoort
     */
       public setEmptyDataObservable = ( type: String, data: any ) => {
         switch(type){
-          case 'user':
+          case 'loggeduser':
             this.loggedUser.next(data)
             break;
           default:
