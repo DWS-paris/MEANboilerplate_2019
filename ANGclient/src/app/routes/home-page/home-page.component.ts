@@ -64,7 +64,7 @@ Definition & export
     Hooks
     */
       ngOnInit() {
-        this.getPosts();
+        // this.getPosts();
       }
     //
 

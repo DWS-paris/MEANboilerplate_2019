@@ -1,0 +1,24 @@
+<form   
+  [formGroup]="form" 
+  (submit)="submitForm()"
+>
+    <fieldset>
+        <legend>Credentials</legend>
+        <label for="email">Email</label>
+        <input 
+            type="email" id="email" name="email" required minlength="5"
+            formControlName="email"
+        >
+
+        <label for="password">Password</label>
+        <input 
+            type="password" id="password" name="password" required minlength="5"
+            formControlName="password"
+        >
+    </fieldset>
+
+  <button 
+    type="submit"
+    [disabled]="!form.valid"
+  >Register</button>
+</form>
