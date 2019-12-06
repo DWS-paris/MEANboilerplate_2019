@@ -123,7 +123,7 @@ Routes definition
             });
 
             // GET 'api/auth': check user token (for Angular AuthGuard)
-            authRouter.get( '/', this.passport.authenticate('jwt', { session: false }), (req, res) => {
+            myRouter.get( '/', this.passport.authenticate('jwt', { session: false }), (req, res) => {
                 getUserInfo(req)
                 .then( apiResponse => {
                     return res.status(200).json({
